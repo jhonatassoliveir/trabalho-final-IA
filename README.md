@@ -118,6 +118,7 @@ LTNs poderiam ser aplicadas ao Sudoku, mas:
 - Fernanda de Oliveira da Costa  
 - Stanley de Carvalho Monteiro  
 - Ícaro Costa Moreira
+- Rosineide Santana Santos
 
 
 ---
