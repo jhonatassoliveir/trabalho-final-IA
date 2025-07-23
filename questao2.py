@@ -181,21 +181,38 @@ def avaliar_tabuleiro(tabuleiro, pred):
 
 
 if __name__ == "__main__":
-    """
-    Ponto de entrada do script. Lê arquivos .csv com tabuleiros, treina modelo e realiza a avaliação.
-    """
     if len(sys.argv) != 2:
-        print("Uso: python questao2.py <pasta_com_csvs>")
+        # A mensagem de uso agora reflete a nova flexibilidade
+        print("Uso: python questao2.py <pasta_com_csvs_ou_arquivo.csv>")
         exit()
 
-    pasta = sys.argv[1]
-    arquivos = [arq for arq in os.listdir(pasta) if arq.endswith(".csv")]
+    caminho_entrada = sys.argv[1]
+    lista_arquivos_csv = []
+
+    if os.path.isdir(caminho_entrada):
+        # Se for um diretório, faz o que já fazia antes
+        print(f"Analisando todos os arquivos .csv na pasta: {caminho_entrada}")
+        # Cria o caminho completo para cada arquivo
+        for arq in os.listdir(caminho_entrada):
+            if arq.endswith(".csv"):
+                lista_arquivos_csv.append(os.path.join(caminho_entrada, arq))
+                
+    elif os.path.isfile(caminho_entrada) and caminho_entrada.endswith(".csv"):
+        # Se for um único arquivo .csv, adiciona ele à lista
+        print(f"Analisando o arquivo: {caminho_entrada}")
+        lista_arquivos_csv.append(caminho_entrada)
+        
+    else:
+        # Se não for nem um diretório válido nem um arquivo .csv
+        print(f"Erro: O caminho '{caminho_entrada}' não é um diretório válido nem um arquivo .csv.")
+        exit()
 
     predicados = {}
 
-    for arquivo in arquivos:
-        caminho = os.path.join(pasta, arquivo)
-        tab = pd.read_csv(caminho, header=None).to_numpy()
+    # O loop principal agora itera sobre a lista de caminhos completos
+    for caminho_completo in lista_arquivos_csv:
+        print(f"\nArquivo: {os.path.basename(caminho_completo)}")
+        tab = pd.read_csv(caminho_completo, header=None).to_numpy()
         tamanho = tab.shape[0]
 
         if tamanho not in predicados:
@@ -203,6 +220,5 @@ if __name__ == "__main__":
             pred = ltn.Predicate(modelo)
             treinar_modelo(pred, tamanho)
             predicados[tamanho] = pred
-
-        print(f"\nArquivo: {arquivo}")
+            
         avaliar_tabuleiro(tab, predicados[tamanho])
